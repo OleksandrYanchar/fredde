@@ -28,7 +28,15 @@ ENEMY_SPAWN_TIME = 1000  # milliseconds
 BEST_SCORE_FILE = "best_score.txt"
 
 # Function to end the game and show results
-def game_over_screen(window, score, best_score):
+def game_over_screen(window, score, best_score, clock):
+    # Display the game over screen with score and best score
+    # Provide the option to restart the game
+    # Parameters:
+    # window (pygame.Surface): The game window surface
+    # score (int): The player's current score
+    # best_score (int): The best score achieved in the game
+    # clock (pygame.time.Clock): The game's clock for controlling the frame rate
+
     window.fill(BLACK)
     draw_text(window, "Game Over!", 48, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 - 50, WHITE)
     draw_text(window, f"Your Score: {score} points", 36, WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, WHITE)
@@ -48,11 +56,20 @@ def game_over_screen(window, score, best_score):
 
 # Function to end the game
 def game_over():
+    # Quit the game and exit the program
     pygame.quit()
     sys.exit()
 
 # Function to display text on the screen
 def draw_text(window, text, size, x, y, color):
+    # Draw text on the specified window at the given position
+    # Parameters:
+    # window (pygame.Surface): The game window surface
+    # text (str): The text to display
+    # size (int): The font size
+    # x (int): X-coordinate of the text's center
+    # y (int): Y-coordinate of the text's center
+    # color (tuple): RGB color tuple (e.g., WHITE)
     font = pygame.font.SysFont(None, size)
     text_surface = font.render(text, True, color)
     text_rect = text_surface.get_rect()
@@ -62,12 +79,17 @@ def draw_text(window, text, size, x, y, color):
 
 # Function to restart the game
 def restart_game():
+    # Reset the game state to start a new game
+    # Set the enemy speed, score, and lives to initial values
     global ENEMY_SPEED, score, lives
     ENEMY_SPEED = 5
     score = 0
     lives = MAX_LIVES
 
 def load_best_score():
+    # Attempt to read the best score from the "best_score.txt" file
+    # If the file does not exist or is empty, return 0 as the best score
+    # If the file contains a valid integer, return it as the best score
     try:
         with open(BEST_SCORE_FILE, "r") as file:
             content = file.read().strip()
@@ -80,11 +102,17 @@ def load_best_score():
         return 0
 
 def save_best_score(best_score):
+    # Save the best score to the "best_score.txt" file
+    # Parameters:
+    # best_score (int): The best score achieved in the game
     with open(BEST_SCORE_FILE, "w") as file:
         file.write(str(best_score))
 
 # Flappy Bird mini-game
 def flappy_bird_game(window):
+    # The Flappy Bird mini-game
+    # Parameters:
+    # window (pygame.Surface): The game window surface
     BIRD_WIDTH = 50
     BIRD_HEIGHT = 50
     BIRD_GRAVITY = 0.3
@@ -143,7 +171,7 @@ def flappy_bird_game(window):
                 if bird_y < pipe['height'] or bird_y + BIRD_HEIGHT > pipe['y']:
                     # Collision with a pipe, game over
                     collision_sound.play()
-                    game_over_screen(window, score, best_score)
+                    return score
 
         # Check if bird passes through a pipe for scoring
         for pipe in pipes:
@@ -167,8 +195,15 @@ def flappy_bird_game(window):
         pygame.display.update()
         clock.tick(FPS)
 
+
 # Flappy Fredde mini-game
-def flappy_fredde_game(window):
+def flappy_fredde_game(window, best_score, clock):
+    # The Flappy Fredde mini-game
+    # Parameters:
+    # window (pygame.Surface): The game window surface
+    # best_score (int): The best score achieved in the main game
+    # clock (pygame.time.Clock): The game's clock for controlling the frame rate
+
     FREDDE_WIDTH = 50
     FREDDE_HEIGHT = 50
     FREDDE_GRAVITY = 0.3
@@ -176,6 +211,7 @@ def flappy_fredde_game(window):
     fredde_x = WINDOW_WIDTH // 3
     fredde_y = WINDOW_HEIGHT // 2
     fredde_velocity = 0
+    score = 0  # Initialize score for Flappy Fredde game
 
     # Load the Flappy Fredde image and resize it to match its dimensions
     FREDDE_IMAGE = pygame.image.load('fredde.png')
@@ -226,8 +262,8 @@ def flappy_fredde_game(window):
             if fredde_x + FREDDE_WIDTH > pipe['x'] and fredde_x < pipe['x'] + ENEMY_WIDTH:
                 if fredde_y < pipe['height'] or fredde_y + FREDDE_HEIGHT > pipe['y']:
                     # Collision with a pipe, game over
-                    collision_sound.play()
-                    game_over_screen(window, score, best_score)
+                    #collision_sound.play()
+                    return score
 
         # Check if Flappy Fredde passes through a pipe for scoring
         for pipe in pipes:
@@ -251,20 +287,38 @@ def flappy_fredde_game(window):
         pygame.display.update()
         clock.tick(FPS)
 
+
 # Load the Fredde image and resize it to match the Fredde's dimensions
 FREDDE_IMAGE = pygame.image.load('fredde.png')
 FREDDE_IMAGE = pygame.transform.scale(FREDDE_IMAGE, (ENEMY_WIDTH, ENEMY_HEIGHT))
 
 # Function to draw the bird
 def draw_bird(window, x, y):
+    # Draw the bird on the specified window at the given position
+    # Parameters:
+    # window (pygame.Surface): The game window surface
+    # x (int): X-coordinate of the bird's top-left corner
+    # y (int): Y-coordinate of the bird's top-left corner
     window.blit(BIRD_IMAGE, (x, y))
 
 # Function to draw Flappy Fredde
 def draw_fredde(window, x, y):
+    # Draw Flappy Fredde on the specified window at the given position
+    # Parameters:
+    # window (pygame.Surface): The game window surface
+    # x (int): X-coordinate of Flappy Fredde's top-left corner
+    # y (int): Y-coordinate of Flappy Fredde's top-left corner
+
     window.blit(FREDDE_IMAGE, (x, y))
 
 # Main game function
+# ... (your existing code)
+
+# Main game function
 def game():
+    # The main game function that manages the gameplay
+    # Initialize the game window, clock, and other variables
+    # Run the game loop and update the game state accordingly
     global ENEMY_SPEED
     ENEMY_SPEED = 5
 
@@ -318,9 +372,9 @@ def game():
             pygame.display.update()
             pygame.time.delay(1000)  # Delay before entering Flappy Fredde
 
-            if score >= 1000:
+            if score >= 10: # 1000
                 # Start Flappy Fredde game if score is 1000 or more
-                score_in_flappy_fredde = flappy_fredde_game(window)
+                score_in_flappy_fredde = flappy_fredde_game(window, best_score, clock)
                 score += score_in_flappy_fredde
                 player_y = WINDOW_HEIGHT - PLAYER_HEIGHT
 
@@ -362,3 +416,9 @@ def game():
 if __name__ == "__main__":
     restart_game()
     game()
+
+
+if __name__ == "__main__":
+    restart_game()
+    game()
+
